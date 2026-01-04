@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@Setter
 @Entity
 @Table(name = "raw_vocabulary")
 public class RawVocabulary {
@@ -23,7 +22,7 @@ public class RawVocabulary {
     @Column(name = "type_name_ko", length = 100)
     private String typeNameKo;
 
-    @Lob
+
     @Column(name = "description")
     private String description;
 

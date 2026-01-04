@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@Setter
 @Entity
 @Table(name = "raw_filler_script")
 public class RawFillerScript {
@@ -20,7 +19,6 @@ public class RawFillerScript {
     private Long gameId;
 
     @NotNull
-    @Lob
     @Column(name = "commentary", nullable = false)
     private String commentary;
 

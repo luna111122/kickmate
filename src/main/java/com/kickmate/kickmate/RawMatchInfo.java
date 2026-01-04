@@ -9,7 +9,6 @@ import lombok.Setter;
 import java.time.Instant;
 
 @Getter
-@Setter
 @Entity
 @Table(name = "raw_match_info")
 public class RawMatchInfo {
