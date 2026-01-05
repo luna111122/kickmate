@@ -17,7 +17,7 @@ public class RawActionEvent {
 
     @NotNull
     @Column(name = "game_id", nullable = false)
-    private Integer gameId;
+    private Long gameId;
 
     @NotNull
     @Column(name = "action_id", nullable = false)

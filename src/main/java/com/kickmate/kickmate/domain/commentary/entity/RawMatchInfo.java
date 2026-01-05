@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -30,7 +31,7 @@ public class RawMatchInfo {
     private Integer gameDay;
 
     @Column(name = "game_date")
-    private Instant gameDate;
+    private LocalDateTime gameDate;
 
     @Column(name = "home_team_id")
     private Long homeTeamId;
