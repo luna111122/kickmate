@@ -2,10 +2,12 @@ package com.kickmate.kickmate.domain.commentary.service;
 
 import com.kickmate.kickmate.domain.commentary.ai.AICommentaryOrchestrator;
 import com.kickmate.kickmate.domain.commentary.dto.StartCommentaryReq;
+import com.kickmate.kickmate.domain.commentary.dto.StartCommentaryRes;
 import com.kickmate.kickmate.domain.commentary.entity.RawFillerScript;
 import com.kickmate.kickmate.domain.commentary.exception.CommentaryException;
 import com.kickmate.kickmate.domain.commentary.exception.code.CommentaryErrorCode;
 import com.kickmate.kickmate.domain.commentary.repository.FillerScriptRepository;
+import com.kickmate.kickmate.domain.commentary.s3.S3Uploader;
 import com.kickmate.kickmate.domain.commentary.tts.GoogleTtsClient;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +20,10 @@ public class CommentaryService {
     private final FillerScriptRepository fillerScriptRepository;
     private final GoogleTtsClient googleTtsClient;
     private final AICommentaryOrchestrator aiCommentaryOrchestrator;
+    private final S3Uploader s3Uploader;
 
 
-    public byte[] startCommentary(@Valid StartCommentaryReq dto) {
+    public StartCommentaryRes startCommentary(@Valid StartCommentaryReq dto) {
 
 
         /*
@@ -37,11 +40,7 @@ public class CommentaryService {
          */
 
         //ai
-        aiCommentaryOrchestrator.
-
-
-
-
+        String jobId = aiCommentaryOrchestrator.createScript(dto);
 
 
         //프론트
@@ -54,7 +53,14 @@ public class CommentaryService {
 
         byte[] tts = googleTtsClient.createTts(script.getCommentary(), dto.getStyle());
 
-        return tts;
+        // 4) S3 업로드
+        String key = "commentary/filler/" + dto.getGameId() + "/" + jobId + ".mp3";
+        String fillerUrl = s3Uploader.upload(key, tts, "audio/mpeg");
+
+        return StartCommentaryRes.builder()
+                .fillerAudioUrl(fillerUrl)
+                .jobId(jobId)
+                .build();
 
     }
 }

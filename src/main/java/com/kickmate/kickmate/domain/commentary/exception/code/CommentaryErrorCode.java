@@ -11,16 +11,27 @@ public enum CommentaryErrorCode implements BaseErrorCode {
 
     INVALID(HttpStatus.BAD_REQUEST,
             "COMMON400",
-            "요청이 적절하지 않습니다."),
-
+            "요청이 적절하지 않습니다."
+    ),
     FILLER_SCRIPT_NOT_FOUND(
             HttpStatus.NOT_FOUND,
-            "COMMENTARY_001",
+            "COMMENTARY_400",
             "해당 경기의 필러 스크립트를 찾을 수 없습니다."
-
-    ), AI_REQUEST_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,
+    ),
+    AI_REQUEST_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,
             "COMMENTARY_002",
-            "ai tts를 생성하지 못했습니다");
+            "ai tts를 생성하지 못했습니다"
+    ),
+    MATCH_INFO_NOT_FOUND(
+            HttpStatus.NOT_FOUND,
+            "COMMENTARY_400",
+            "해당 경기의 match_info 를 찾을 수 없습니다."
+            ),
+    ACTION_EVENT_NOT_FOUND(
+            HttpStatus.NOT_FOUND,
+            "COMMENTARY_400",
+            "해당 경기의 raw_data 를 찾을 수 없습니다."
+    );
 
 
 
