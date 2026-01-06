@@ -36,6 +36,17 @@ public class CommentaryController {
         return ApiResponse.onSuccess(CommentarySuccessCode.COMMENTARY_FIRST_SUCCESS,startCommentary);
     }
 
+    //다음에 알려주는 해설 mp3
+    @PostMapping("/next")
+    public ApiResponse<?> createCommentary(
+            @RequestBody @Valid StartCommentaryReq dto
+    ){
+
+
+        String commentary = commentaryService.createCommentary(dto);
+
+        return ApiResponse.onSuccess(CommentarySuccessCode.COMMENTARY_SUCCESS,commentary);
+    }
 
 
 }

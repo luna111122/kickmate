@@ -28,4 +28,7 @@ public class AiCommentarySseRes {
 
     // 좌표 + 팀 정보
     private List<ActionCoordDto> coords;
+
+    //프론트용 clientId
+    private String clientId;
 }

@@ -7,7 +7,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/sse")
+@RequestMapping("/api/v1/sse")
 public class AICommentarySseController {
 
     private final AICommentarySseService aiCommentarySseService;

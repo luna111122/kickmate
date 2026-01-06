@@ -31,7 +31,13 @@ public enum CommentaryErrorCode implements BaseErrorCode {
             HttpStatus.NOT_FOUND,
             "COMMENTARY_400",
             "해당 경기의 raw_data 를 찾을 수 없습니다."
-    );
+    ),
+    AI_JOB_NOT_FOUND(
+            HttpStatus.NOT_FOUND,
+            "COMMENTARY_400",
+            "존재하지 않는 jobId 입니다"
+    )
+    ;
 
 
 

@@ -45,7 +45,7 @@ public class AICommentarySseService {
         return emitter;
     }
 
-    public void sendDone(String jobId, Object resultDto) {
+    public void sendDone(String jobId, AiCommentarySseRes resultDto) {
         SseEmitter emitter = emitters.get(jobId);
 
         if (emitter == null) {

@@ -1,6 +1,10 @@
 package com.kickmate.kickmate.domain.commentary.service;
 
 import com.kickmate.kickmate.domain.commentary.dto.ActionCoordDto;
+import com.kickmate.kickmate.domain.commentary.entity.AiJob;
+import com.kickmate.kickmate.domain.commentary.exception.CommentaryException;
+import com.kickmate.kickmate.domain.commentary.exception.code.CommentaryErrorCode;
+import com.kickmate.kickmate.domain.commentary.repository.AIJobRepository;
 import com.kickmate.kickmate.domain.commentary.sse.AICommentarySseService;
 import com.kickmate.kickmate.domain.commentary.sse.AiCommentarySseRes;
 import com.kickmate.kickmate.domain.commentary.dto.AiWebhookReq;
@@ -16,6 +20,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +30,7 @@ public class AIWebhookWorker {
     private final S3Uploader s3Uploader;
     private final ActionEventRepository actionEventRepository;
     private final AICommentarySseService aiCommentarySseService;
+    private final AIJobRepository aiJobRepository;
 
     @Async("aiWebhookExecutor")
     public void processAsync(AiWebhookReq req) {
@@ -68,6 +74,11 @@ public class AIWebhookWorker {
                     .toList();
 
 
+            String clientId = aiJobRepository.findByJobId(req.getJobId())
+                    .orElseThrow(() -> new CommentaryException(CommentaryErrorCode.AI_JOB_NOT_FOUND))
+                    .getClientId();
+
+
             // 7) 🔥 최종 결과 DTO 하나로 조립
             AiCommentarySseRes result = AiCommentarySseRes.builder()
                     .gameId(req.getGameId())
@@ -75,6 +86,7 @@ public class AIWebhookWorker {
                     .mp3Url(mp3Url)
                     .script(req.getScript())
                     .coords(coords)
+                    .clientId(clientId)
                     .build();
 
 

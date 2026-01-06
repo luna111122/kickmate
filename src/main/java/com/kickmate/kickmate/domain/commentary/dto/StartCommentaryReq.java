@@ -23,5 +23,8 @@ public class StartCommentaryReq {
     int actionId;
 
     @NotNull
+    String clientId;
+
+    @NotNull
     Style style;
 }

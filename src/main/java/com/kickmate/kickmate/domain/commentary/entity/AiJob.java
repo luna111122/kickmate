@@ -1,6 +1,7 @@
 package com.kickmate.kickmate.domain.commentary.entity;
 
 
+import com.kickmate.kickmate.domain.commentary.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,9 +31,16 @@ public class AiJob {
     @Column(name = "game_id", nullable = false, length = 32)
     private Long gameId;
 
+    @Column(name = "client_id", nullable = false, length = 64)
+    private String clientId;   // SSE 구독자 / 요청자 식별용
+
     @Column(nullable = false, length = 10)
-    private String status; // PENDING / DONE
+    private Status status; // PENDING / DONE
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
+
+
+
+
 }

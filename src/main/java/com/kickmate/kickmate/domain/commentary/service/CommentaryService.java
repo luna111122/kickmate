@@ -3,15 +3,20 @@ package com.kickmate.kickmate.domain.commentary.service;
 import com.kickmate.kickmate.domain.commentary.ai.AICommentaryOrchestrator;
 import com.kickmate.kickmate.domain.commentary.dto.StartCommentaryReq;
 import com.kickmate.kickmate.domain.commentary.dto.StartCommentaryRes;
+import com.kickmate.kickmate.domain.commentary.entity.AiJob;
 import com.kickmate.kickmate.domain.commentary.entity.RawFillerScript;
+import com.kickmate.kickmate.domain.commentary.enums.Status;
 import com.kickmate.kickmate.domain.commentary.exception.CommentaryException;
 import com.kickmate.kickmate.domain.commentary.exception.code.CommentaryErrorCode;
+import com.kickmate.kickmate.domain.commentary.repository.AIJobRepository;
 import com.kickmate.kickmate.domain.commentary.repository.FillerScriptRepository;
 import com.kickmate.kickmate.domain.commentary.s3.S3Uploader;
 import com.kickmate.kickmate.domain.commentary.tts.GoogleTtsClient;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +26,7 @@ public class CommentaryService {
     private final GoogleTtsClient googleTtsClient;
     private final AICommentaryOrchestrator aiCommentaryOrchestrator;
     private final S3Uploader s3Uploader;
+    private final AIJobRepository aiJobRepository;
 
 
     public StartCommentaryRes startCommentary(@Valid StartCommentaryReq dto) {
@@ -42,9 +48,22 @@ public class CommentaryService {
         //ai
         String jobId = aiCommentaryOrchestrator.createScript(dto);
 
+        //aiJob 엔티티에 jobId, 그리고 clientId 와 함께 저장해서 나중에 보내주기
+        AiJob job = AiJob.builder()
+                .jobId(jobId)
+                .gameId(dto.getGameId())
+                .status(Status.PENDING)
+                .clientId(dto.getClientId())
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        //clientId 까지 저장해둔다
+        aiJobRepository.save(job);
+
 
         //프론트
 
+        //필러멘트 스크립트 mp3 생성
         RawFillerScript script = fillerScriptRepository
                 .findFirstByGameId(dto.getGameId())
                 .orElseThrow(() -> new CommentaryException(
@@ -55,7 +74,7 @@ public class CommentaryService {
 
 
 
-        // 4) S3 업로드
+        // mp3 S3 업로드
         String key = "commentary/filler/" + dto.getGameId() + "/" + jobId + ".mp3";
         String fillerUrl = s3Uploader.upload(key, tts, "audio/mpeg");
 
@@ -65,4 +84,29 @@ public class CommentaryService {
                 .build();
 
     }
+
+
+    public String createCommentary(@Valid StartCommentaryReq dto) {
+
+        //ai
+        String jobId = aiCommentaryOrchestrator.createScript(dto);
+
+        //aiJob 엔티티에 jobId, 그리고 clientId 와 함께 저장해서 나중에 보내주기
+        AiJob job = AiJob.builder()
+                .jobId(jobId)
+                .gameId(dto.getGameId())
+                .status(Status.PENDING)
+                .clientId(dto.getClientId())
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        //clientId 까지 저장해둔다
+        aiJobRepository.save(job);
+
+
+        return jobId;
+
+    }
 }
+
+
