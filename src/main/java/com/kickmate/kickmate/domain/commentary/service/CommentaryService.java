@@ -53,6 +53,8 @@ public class CommentaryService {
 
         byte[] tts = googleTtsClient.createTts(script.getCommentary(), dto.getStyle());
 
+
+
         // 4) S3 업로드
         String key = "commentary/filler/" + dto.getGameId() + "/" + jobId + ".mp3";
         String fillerUrl = s3Uploader.upload(key, tts, "audio/mpeg");
