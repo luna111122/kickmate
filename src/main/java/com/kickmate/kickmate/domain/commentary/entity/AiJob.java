@@ -34,7 +34,8 @@ public class AiJob {
     @Column(name = "client_id", nullable = false, length = 64)
     private String clientId;   // SSE 구독자 / 요청자 식별용
 
-    @Column(nullable = false, length = 10)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 10, columnDefinition = "varchar(10)")
     private Status status; // PENDING / DONE
 
     @Column(name = "created_at", nullable = false)
