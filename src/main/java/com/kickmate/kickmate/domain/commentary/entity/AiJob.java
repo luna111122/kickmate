@@ -28,7 +28,7 @@ public class AiJob {
     private String jobId;
 
     @Column(name = "game_id", nullable = false, length = 32)
-    private String gameId;
+    private Long gameId;
 
     @Column(nullable = false, length = 10)
     private String status; // PENDING / DONE

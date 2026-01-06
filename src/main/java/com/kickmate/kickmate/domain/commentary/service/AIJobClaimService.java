@@ -17,7 +17,7 @@ public class AIJobClaimService {
     private final AIJobRepository aiJobRepository;
 
     @Transactional
-    public boolean markDoneIfFirst(String jobId, String gameId) {
+    public boolean markDoneIfFirst(String jobId, Long gameId) {
         try {
             AiJob job = AiJob.builder()
                     .jobId(jobId)
