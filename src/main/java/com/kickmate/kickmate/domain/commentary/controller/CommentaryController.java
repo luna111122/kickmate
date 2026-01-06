@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 )
 @RequestMapping("/api/v1/commentary")
 @RequiredArgsConstructor
+@RestController
 public class CommentaryController {
 
 
