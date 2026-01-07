@@ -30,14 +30,7 @@ public class AICommentaryOrchestrator {
 
         //여기서 분기 처리 만약 해당 gameId와 actionId 에 대한 내용이 만약 있다면 그냥 반환한다
 
-        // table 에 있어야 하는거
-        /*
-        gameId, actionId, clientId??? 이거를 어케 주지
-        아니 이러면 webhook 이 안와서 sse 도 안가는데?
-        sse 를 트리거를 어케 하지
 
-        만약 여기서 sse를 트리거 하면 이거는
-         */
 
 
 

@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface VocabularyRepository extends JpaRepository<RawVocabulary,Long> {
 
-    Optional<RawVocabulary> findByTypeName(String typeName);
+    Optional<RawVocabulary> findByTypeNameKo(String typeNameKo);
 }

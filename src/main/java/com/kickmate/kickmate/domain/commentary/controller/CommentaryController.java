@@ -19,7 +19,7 @@ public class CommentaryController {
 
 
 
-    private CommentaryService commentaryService;
+    private final CommentaryService commentaryService;
 
     //이거는 첫 해설
     @PostMapping

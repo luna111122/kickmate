@@ -22,7 +22,7 @@ public class VocabularyService {
     public VocabularyRes getVocab(@Valid VocabularyReq dto) {
 
         RawVocabulary vocab = vocabularyRepository
-                .findByTypeName(dto.getVocab())
+                .findByTypeNameKo(dto.getVocab())
                 .orElseThrow(() -> new VocabularyException(VocabularyErrorCode.VOCABULARY_ERROR_CODE));
 
 
