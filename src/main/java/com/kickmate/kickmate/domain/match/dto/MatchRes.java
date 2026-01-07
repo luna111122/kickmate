@@ -39,7 +39,8 @@ public class MatchRes {
     private String awayTeamNameKo;
     private String awayTeamNameKoShort;
 
-    private Integer audienceNum;
+    private String audienceNum;
+
 
     private String temperature;
     private String weather;
@@ -89,7 +90,8 @@ public class MatchRes {
                 .awayTeamNameKo(e.getAwayTeamNameKo())
                 .awayTeamNameKoShort(e.getAwayTeamNameKoShort())
 
-                .audienceNum(e.getAudienceNum())
+                .audienceNum(formatAudience(e.getAudienceNum()))
+
 
                 .temperature(e.getTemperature())
                 .weather(e.getWeather())
@@ -106,6 +108,11 @@ public class MatchRes {
                 .homeTeamUniform(e.getHomeTeamUniform())
                 .awayTeamUniform(e.getAwayTeamUniform())
                 .build();
+    }
+
+    private static String formatAudience(Integer num) {
+        if (num == null) return null;
+        return String.format("%,d", num);
     }
 
 }
