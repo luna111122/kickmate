@@ -1,9 +1,8 @@
-package com.kickmate.kickmate.domain.commentary.entity;
+package com.kickmate.kickmate.domain.vocabulary.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 @Entity

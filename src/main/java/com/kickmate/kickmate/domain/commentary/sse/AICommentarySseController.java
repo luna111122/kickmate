@@ -12,8 +12,11 @@ public class AICommentarySseController {
 
     private final AICommentarySseService aiCommentarySseService;
 
-    @PostMapping (value = "/commentary/{jobId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping (value = "/commentary/{jobId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribe(@PathVariable String jobId) {
+
+
+
         return aiCommentarySseService.subscribe(jobId);
     }
 }

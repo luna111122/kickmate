@@ -12,8 +12,8 @@ public enum MatchErrorCode implements BaseErrorCode {
 
 
     MATCH_INFO_NOT_FOUND(
-            HttpStatus.NOT_FOUND,
-            "MATCH_FILTER_400",
+            HttpStatus.OK,
+            "MATCH_FILTER_200",
             "해당 경기의 match_info 를 찾을 수 없습니다."
     );
 

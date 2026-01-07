@@ -18,13 +18,13 @@ import java.util.List;
 @AllArgsConstructor
 public class AiWebhookReq {
 
-    @NotBlank
+    @NotNull
     private Long gameId;
 
     @NotBlank
     private String jobId;
 
-    @NotBlank
+    @NotNull
     private Status status;
 
     @Valid
@@ -37,16 +37,16 @@ public class AiWebhookReq {
     @AllArgsConstructor
     public static class ScriptLine {
 
-        @NotBlank
+        @NotNull
         private Integer actionId;
 
-        @NotBlank
+        @NotNull
         private String timeSeconds;
 
-        @NotBlank
+        @NotNull
         private Tone tone;
 
-        @NotBlank
+        @NotNull
         private String description;
     }
 }

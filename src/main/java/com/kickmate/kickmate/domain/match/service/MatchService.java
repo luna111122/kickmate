@@ -27,9 +27,7 @@ public class MatchService {
         List<RawMatchInfo> matches = matchInfoRepository
                 .findAllByMonthAndRound(dto.getMonth(), dto.getRound());
 
-        if (matches.isEmpty()) {
-            throw new MatchException(MatchErrorCode.MATCH_INFO_NOT_FOUND);
-        }
+
 
         return matches.stream()
                 .map(MatchRes::from)
