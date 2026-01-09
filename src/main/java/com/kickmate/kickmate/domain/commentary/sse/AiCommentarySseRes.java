@@ -3,6 +3,7 @@ package com.kickmate.kickmate.domain.commentary.sse;
 
 import com.kickmate.kickmate.domain.commentary.dto.ActionCoordDto;
 import com.kickmate.kickmate.domain.commentary.dto.AiWebhookReq;
+import com.kickmate.kickmate.domain.commentary.dto.ScoreRes;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,6 +29,8 @@ public class AiCommentarySseRes {
 
     // 좌표 + 팀 정보
     private List<ActionCoordDto> coords;
+
+    private List<ScoreRes> score;
 
     //프론트용 clientId
     private String clientId;

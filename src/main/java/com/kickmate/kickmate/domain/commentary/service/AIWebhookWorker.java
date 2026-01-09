@@ -1,7 +1,9 @@
 package com.kickmate.kickmate.domain.commentary.service;
 
 import com.kickmate.kickmate.domain.commentary.dto.ActionCoordDto;
+import com.kickmate.kickmate.domain.commentary.dto.ScoreRes;
 import com.kickmate.kickmate.domain.commentary.entity.AiJob;
+import com.kickmate.kickmate.domain.commentary.enums.Style;
 import com.kickmate.kickmate.domain.commentary.exception.CommentaryException;
 import com.kickmate.kickmate.domain.commentary.exception.code.CommentaryErrorCode;
 import com.kickmate.kickmate.domain.commentary.repository.AIJobRepository;
@@ -40,10 +42,14 @@ public class AIWebhookWorker {
             String ssml = SsmlBuilder.toSsml(req.getScript());
 
 
+            Style style = aiJobRepository.findByJobId(req.getJobId())
+                    .orElseThrow(() -> new CommentaryException(CommentaryErrorCode.AI_JOB_NOT_FOUND))
+                    .getStyle();
+
 
 
             // 여기서 Style enum 을 같이 준다
-            byte[] mp3 = googleTtsClient.createTtsFromSsml(ssml, req.g);
+            byte[] mp3 = googleTtsClient.createTtsFromSsml(ssml, style);
 
             String key = "commentary/ai/" + req.getGameId() + "/" + req.getJobId() + ".mp3";
             String mp3Url = s3Uploader.upload(key, mp3, "audio/mpeg");
@@ -61,6 +67,17 @@ public class AIWebhookWorker {
             Pageable limit50 = PageRequest.of(0, 10);
 
             List<RawActionEvent> rawData = actionEventRepository.findByGameIdAndActionIdGreaterThanEqualOrderByActionIdAsc(gameId, firstActionId, limit50);
+
+
+
+
+
+
+
+
+
+
+
 
             List<ActionCoordDto> coords = rawData.stream()
                     .map(r -> ActionCoordDto.builder()
@@ -83,13 +100,35 @@ public class AIWebhookWorker {
                     .getClientId();
 
 
-            // 7) 🔥 최종 결과 DTO 하나로 조립
+
+            Pageable limit10 = PageRequest.of(0, 10);
+
+            List<RawActionEvent> goalEvents =
+                    actionEventRepository.findByGameIdAndActionIdGreaterThanEqualAndTypeNameInOrderByActionIdAsc(
+                            req.getGameId(),
+                            req.getScript().get(0).getActionId(),
+                            List.of("Goal", "Own Goal"),
+                            limit10
+                    );
+
+            List<ScoreRes> scoreList = goalEvents.stream()
+                    .map(event -> ScoreRes.builder()
+                            .typeName(event.getTypeName())
+                            .teamName(event.getTeamNameKoShort())
+                            .actionId(event.getActionId())
+                            .build()
+                    )
+                    .toList();
+
+
+            // 7)  최종 결과 DTO 하나로 조립
             AiCommentarySseRes result = AiCommentarySseRes.builder()
                     .gameId(req.getGameId())
                     .jobId(req.getJobId())
                     .mp3Url(mp3Url)
                     .script(req.getScript())
                     .coords(coords)
+                    .score(scoreList)
                     .clientId(clientId)
                     .build();
 

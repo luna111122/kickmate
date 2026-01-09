@@ -17,4 +17,11 @@ public interface ActionEventRepository extends JpaRepository<RawActionEvent, Lon
             Pageable pageable
     );
 
+    List<RawActionEvent> findByGameIdAndActionIdGreaterThanEqualAndTypeNameInOrderByActionIdAsc(
+            Long gameId,
+            Integer actionId,
+            List<String> typeNames,
+            Pageable pageable
+    );
+
 }

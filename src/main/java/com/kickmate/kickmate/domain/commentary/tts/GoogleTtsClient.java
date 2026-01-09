@@ -18,10 +18,7 @@ public class GoogleTtsClient {
     private final GeneralToneConverter generalToneConverter;
 
     // voice/audioConfig는 고정이면 필드로 캐싱해도 됨
-    private static final VoiceSelectionParams VOICE = VoiceSelectionParams.newBuilder()
-            .setLanguageCode("ko-KR")
-            .setSsmlGender(SsmlVoiceGender.NEUTRAL)
-            .build();
+
 
     private static final AudioConfig AUDIO_CONFIG = AudioConfig.newBuilder()
             .setAudioEncoding(AudioEncoding.MP3)
@@ -31,27 +28,29 @@ public class GoogleTtsClient {
     public byte[] createTts(@NotNull String commentary, Style style) {
         log.info("[TTS] createTts start | style={}", style);
 
+        // 얘는 그냥 여기다가 voice 바꾸면 될듯
         String ssml = generalToneConverter.buildSsml(commentary, style);
         log.debug("[TTS] SSML built | length={}", ssml.length());
 
-        byte[] audio = synthesizeFromSsml(ssml);
+        byte[] audio = synthesizeFromSsml(ssml,style);
 
         log.info("[TTS] createTts success | audioBytes={}", audio.length);
         return audio;
     }
 
     // SSML을 이미 만들어놨을 때
-    public byte[] createTtsFromSsml(@NotNull String ssml) {
+    public byte[] createTtsFromSsml(@NotNull String ssml, Style style) {
         log.info("[TTS] createTtsFromSsml start | ssmlLength={}", ssml.length());
 
-        byte[] audio = synthesizeFromSsml(ssml);
+        byte[] audio = synthesizeFromSsml(ssml,style);
 
         log.info("[TTS] createTtsFromSsml success | audioBytes={}", audio.length);
         return audio;
     }
 
     // 실제 합성
-    private byte[] synthesizeFromSsml(String ssml) {
+    //여기서 Style 받아서 Voice 를 다르게 받는거를 해봐야 한다
+    private byte[] synthesizeFromSsml(String ssml, Style style) {
         try {
             log.debug("[TTS] synthesize start");
 
@@ -60,6 +59,14 @@ public class GoogleTtsClient {
             SynthesisInput input = SynthesisInput.newBuilder()
                     .setSsml(ssml)
                     .build();
+
+            SsmlVoiceGender gender = resolveGender(style);
+
+            VoiceSelectionParams VOICE = VoiceSelectionParams.newBuilder()
+                    .setLanguageCode("ko-KR")
+                    .setSsmlGender(gender)
+                    .build();
+
 
             SynthesizeSpeechResponse response =
                     ttsClient.synthesizeSpeech(input, VOICE, AUDIO_CONFIG);
@@ -73,6 +80,14 @@ public class GoogleTtsClient {
             log.error("[TTS] synthesize failed", e);
             throw new CommentaryException(CommentaryErrorCode.AI_REQUEST_FAILED);
         }
+    }
+
+    private SsmlVoiceGender resolveGender(Style style) {
+        return switch (style) {
+            case CASTER -> SsmlVoiceGender.MALE;     // 캐스터: 남성
+            case ANALYST -> SsmlVoiceGender.FEMALE;  // 분석가: 여성
+            case FRIEND -> SsmlVoiceGender.NEUTRAL;  // 친구: 중성
+        };
     }
 
     private void validateSsml(String ssml) {

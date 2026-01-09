@@ -43,7 +43,7 @@ public class AiJob {
     private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "style", nullable = true)
+    @Column(name = "style", nullable = true, columnDefinition = "varchar(20)")
     private Style style;
 
 

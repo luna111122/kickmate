@@ -34,7 +34,7 @@ public class AiCallbackController {
         log.info("[AI CALLBACK] webhook processed successfully. jobId={}",
                 req.getJobId());
 
-        // 웹훅은 보통 "받았다"만 빨리 응답하는 게 국룰
+        // 웹훅은 받았다 라고 빨리 응답
         return ResponseEntity.ok().build();
     }
 }
