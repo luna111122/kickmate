@@ -10,7 +10,8 @@ public class AIClientConfig {
     @Bean
     public WebClient aiWebClient() {
         return WebClient.builder()
-                .baseUrl("http://ai-server")  //FastAPI 주소
+                //.baseUrl("http://ai-server")//FastAPI 주소
+                .baseUrl("https://donna-reference-fibre-august.trycloudflare.com")
                 .build();
     }
 }

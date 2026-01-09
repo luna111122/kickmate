@@ -45,7 +45,7 @@ public class CommentaryService {
         이후 받은 jobId 를 스케쥴링 하는데 안에다가 넣어놔야 한다
          */
 
-        /*//ai
+        //ai
         String jobId = aiCommentaryOrchestrator.createScript(dto);
 
         //aiJob 엔티티에 jobId, 그리고 clientId 와 함께 저장해서 나중에 보내주기
@@ -58,7 +58,7 @@ public class CommentaryService {
                 .build();
 
         //clientId 까지 저장해둔다
-        aiJobRepository.save(job);*/
+        aiJobRepository.save(job);
 
 
         //프론트
@@ -73,7 +73,8 @@ public class CommentaryService {
         byte[] tts = googleTtsClient.createTts(script.getCommentary(), dto.getStyle());
 
 
-        String jobId = "1234567";
+
+
 
         // mp3 S3 업로드
         String key = "commentary/filler/" + dto.getGameId() + "/" + jobId + ".mp3";

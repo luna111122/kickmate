@@ -15,7 +15,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 public class AICommentaryRequest {
-    private Long gameId;
+    private String gameId;
     private Style style;
     private MatchInfoDto matchInfo;
     private List<ActionEventDto> rawData;
@@ -27,7 +27,7 @@ public class AICommentaryRequest {
             List<com.kickmate.kickmate.domain.commentary.entity.RawActionEvent> actionEvents
     ) {
         return AICommentaryRequest.builder()
-                .gameId(gameId)
+                .gameId(String.valueOf(gameId))
                 .style(style)
                 .matchInfo(MatchInfoDto.from(matchInfo))
                 .rawData(actionEvents.stream().map(ActionEventDto::from).toList())

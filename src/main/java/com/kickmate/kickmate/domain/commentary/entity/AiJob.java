@@ -2,6 +2,7 @@ package com.kickmate.kickmate.domain.commentary.entity;
 
 
 import com.kickmate.kickmate.domain.commentary.enums.Status;
+import com.kickmate.kickmate.domain.commentary.enums.Style;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -41,6 +42,9 @@ public class AiJob {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "style", nullable = true)
+    private Style style;
 
 
 

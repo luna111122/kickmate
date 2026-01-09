@@ -30,7 +30,7 @@ public class AICommentaryClient {
         AICommentaryRequest request = AICommentaryRequest.of(gameId, style, matchInfo, actionEvents);
 
         return webClient.post()
-                .uri("/ai/commentary")
+                .uri("/ai/commentary/jobs")
                 .bodyValue(request)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, resp ->

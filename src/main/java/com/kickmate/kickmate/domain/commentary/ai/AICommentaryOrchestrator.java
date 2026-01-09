@@ -43,7 +43,7 @@ public class AICommentaryOrchestrator {
 
 
 
-        Pageable limit50 = PageRequest.of(0, 50);
+        Pageable limit50 = PageRequest.of(0, 10);
 
         List<RawActionEvent> actionEvents =
                 actionEventRepository

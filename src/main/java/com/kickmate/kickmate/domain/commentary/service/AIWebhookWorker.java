@@ -39,7 +39,11 @@ public class AIWebhookWorker {
 
             String ssml = SsmlBuilder.toSsml(req.getScript());
 
-            byte[] mp3 = googleTtsClient.createTtsFromSsml(ssml);
+
+
+
+            // 여기서 Style enum 을 같이 준다
+            byte[] mp3 = googleTtsClient.createTtsFromSsml(ssml, req.g);
 
             String key = "commentary/ai/" + req.getGameId() + "/" + req.getJobId() + ".mp3";
             String mp3Url = s3Uploader.upload(key, mp3, "audio/mpeg");
@@ -54,7 +58,7 @@ public class AIWebhookWorker {
                     .getActionId();
 
 
-            Pageable limit50 = PageRequest.of(0, 50);
+            Pageable limit50 = PageRequest.of(0, 10);
 
             List<RawActionEvent> rawData = actionEventRepository.findByGameIdAndActionIdGreaterThanEqualOrderByActionIdAsc(gameId, firstActionId, limit50);
 

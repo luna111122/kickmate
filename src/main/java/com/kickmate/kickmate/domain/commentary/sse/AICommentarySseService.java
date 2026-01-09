@@ -40,6 +40,8 @@ public class AICommentarySseService {
             emitter.send(SseEmitter.event().name("connected").data("ok"));
         } catch (IOException e) {
             emitters.remove(jobId);
+            log.info("[SSE] exception 예외 jobId={} ", jobId);
+
         }
 
         return emitter;
