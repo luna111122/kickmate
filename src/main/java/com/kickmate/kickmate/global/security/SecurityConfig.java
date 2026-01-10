@@ -35,7 +35,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(Customizer.withDefaults()) // ✅ Bean(corsConfigurationSource) 사용
+                .cors(Customizer.withDefaults()) // Bean(corsConfigurationSource) 사용
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .formLogin(form -> form.disable())
@@ -67,7 +67,7 @@ public class SecurityConfig {
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("Authorization", "Set-Cookie"));
 
-        // ✅ SSE/브라우저 호환성: 쿠키 안 쓰면 false가 더 안전
+        //  SSE/브라우저 호환성: 쿠키 안 쓰면 false가 더 안전
         // 쿠키 기반 인증을 SSE에 쓸 게 아니면 false 추천
         config.setAllowCredentials(false);
 

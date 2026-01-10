@@ -48,6 +48,16 @@ public class CommentaryService {
         //ai
         String jobId = aiCommentaryOrchestrator.createScript(dto);
 
+
+
+
+
+
+
+
+
+
+
         //aiJob 엔티티에 jobId, 그리고 clientId 와 함께 저장해서 나중에 보내주기
         AiJob job = AiJob.builder()
                 .jobId(jobId)
@@ -55,6 +65,7 @@ public class CommentaryService {
                 .status(Status.PENDING)
                 .clientId(dto.getClientId())
                 .createdAt(LocalDateTime.now())
+                .style(dto.getStyle())
                 .build();
 
         //clientId 까지 저장해둔다
@@ -93,6 +104,13 @@ public class CommentaryService {
         //ai
         String jobId = aiCommentaryOrchestrator.createScript(dto);
 
+
+
+
+
+
+
+
         //aiJob 엔티티에 jobId, 그리고 clientId 와 함께 저장해서 나중에 보내주기
         AiJob job = AiJob.builder()
                 .jobId(jobId)
@@ -100,6 +118,7 @@ public class CommentaryService {
                 .status(Status.PENDING)
                 .clientId(dto.getClientId())
                 .createdAt(LocalDateTime.now())
+                .style(dto.getStyle())
                 .build();
 
         //clientId 까지 저장해둔다

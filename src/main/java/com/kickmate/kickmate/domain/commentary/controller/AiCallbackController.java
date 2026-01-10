@@ -19,7 +19,7 @@ public class AiCallbackController {
 
     private final AICallbackService aiCallbackService;
 
-    // api/callback/ai-result 로 받는다
+    // ai/callback/ai-result 로 받는다
     @PostMapping("/ai-result")
     public ResponseEntity<Void> receiveAIResult(@Valid @RequestBody AiWebhookReq req) {
 

@@ -103,13 +103,15 @@ public class AIWebhookWorker {
 
             Pageable limit10 = PageRequest.of(0, 10);
 
-            List<RawActionEvent> goalEvents =
-                    actionEventRepository.findByGameIdAndActionIdGreaterThanEqualAndTypeNameInOrderByActionIdAsc(
-                            req.getGameId(),
-                            req.getScript().get(0).getActionId(),
-                            List.of("Goal", "Own Goal"),
-                            limit10
-                    );
+            List<RawActionEvent> next10 =
+                    actionEventRepository
+                            .findByGameIdAndActionIdGreaterThanEqualOrderByActionIdAsc(
+                                    gameId, req.getScript().get(0).getActionId(), limit10
+                            );
+
+            List<RawActionEvent> goalEvents = next10.stream()
+                    .filter(e -> "Goal".equals(e.getTypeName()) || "Own Goal".equals(e.getTypeName()))
+                    .toList(); // 없으면 자동으로 빈 리스트
 
             List<ScoreRes> scoreList = goalEvents.stream()
                     .map(event -> ScoreRes.builder()
