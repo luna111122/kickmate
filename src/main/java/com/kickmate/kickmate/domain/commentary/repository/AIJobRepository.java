@@ -22,4 +22,17 @@ public interface AIJobRepository extends JpaRepository<AiJob, Long> {
             @Param("jobId") String jobId,
             @Param("status") Status status
     );
+
+    @Modifying
+    @Query("""
+    UPDATE AiJob a
+    SET a.status = :newStatus
+    WHERE a.jobId = :jobId
+    AND a.status = :expectedStatus
+""")
+    int updateStatusByJobIdAndStatus(
+            @Param("jobId") String jobId,
+            @Param("expectedStatus") Status expectedStatus,
+            @Param("newStatus") Status newStatus
+    );
 }
