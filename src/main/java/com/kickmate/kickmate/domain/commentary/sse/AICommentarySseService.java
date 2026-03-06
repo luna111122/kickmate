@@ -47,6 +47,22 @@ public class AICommentarySseService {
         return emitter;
     }
 
+    public void sendError(String jobId, String errorMessage) {
+        SseEmitter emitter = emitters.remove(jobId);
+        if (emitter == null) {
+            log.info("[SSE] no subscriber for error event jobId={}", jobId);
+            return;
+        }
+        try {
+            emitter.send(SseEmitter.event()
+                    .name("error")
+                    .data(errorMessage));
+            emitter.complete();
+        } catch (IOException e) {
+            log.warn("[SSE] sendError failed jobId={} msg={}", jobId, e.toString());
+        }
+    }
+
     public void sendDone(String jobId, AiCommentarySseRes resultDto) {
         SseEmitter emitter = emitters.get(jobId);
 

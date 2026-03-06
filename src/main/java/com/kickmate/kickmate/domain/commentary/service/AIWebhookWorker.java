@@ -16,6 +16,7 @@ import com.kickmate.kickmate.domain.commentary.s3.S3Uploader;
 import com.kickmate.kickmate.domain.commentary.ssml.SsmlBuilder;
 import com.kickmate.kickmate.domain.commentary.tts.GoogleTtsClient;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class AIWebhookWorker {
 
@@ -33,6 +35,7 @@ public class AIWebhookWorker {
     private final ActionEventRepository actionEventRepository;
     private final AICommentarySseService aiCommentarySseService;
     private final AIJobRepository aiJobRepository;
+    private final AIJobClaimService aiJobClaimService;
 
     @Async("aiWebhookExecutor")
     public void processAsync(AiWebhookReq req) {
@@ -141,17 +144,18 @@ public class AIWebhookWorker {
 
 
 
-            // TODO (다음 단계에서 붙일 것)
-            // 1) script -> ssml 파싱
-            // 2) tts 생성
-            // 3) s3 업로드
-            // 좌표랑 선수 팀이름 한국어로 짧은 버전으로 주기
-            // 4) SSE로 전달
+
 
 
         } catch (Exception e) {
-
-            // TODO: 실패 상태를 DB에 저장 / 재시도 큐 넣기 등
+            log.error("[WEBHOOK] processAsync failed. jobId={}, gameId={}, error={}",
+                    req.getJobId(), req.getGameId(), e.getMessage(), e);
+            try {
+                aiJobClaimService.markFailed(req.getJobId());
+            } catch (Exception dbEx) {
+                log.error("[WEBHOOK] failed to mark job as FAILED. jobId={}", req.getJobId(), dbEx);
+            }
+            aiCommentarySseService.sendError(req.getJobId(), "해설 생성 중 오류가 발생했습니다.");
         }
     }
 }

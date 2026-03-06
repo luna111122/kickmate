@@ -23,7 +23,7 @@ public class SsmlBuilder {
 
                 var prosody = SsmlToneMapper.map(line.getTone().name());
 
-                // QUESTION 톤이면 물음표 없을 때만 붙이는 옵션 (원치 않으면 제거)
+                // QUESTION 톤이면 물음표 없을 때만 붙이는 옵션
                 if ("QUESTION".equalsIgnoreCase(line.getTone().name()) && !endsWithQuestionMark(text)) {
                     text = text + "?";
                 }

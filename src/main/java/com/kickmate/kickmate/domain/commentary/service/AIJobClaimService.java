@@ -21,6 +21,12 @@ public class AIJobClaimService {
     private final AIJobRepository aiJobRepository;
 
     @Transactional
+    public void markFailed(String jobId) {
+        log.warn("[AI JOB CLAIM] marking job as FAILED. jobId={}", jobId);
+        aiJobRepository.updateStatusByJobId(jobId, Status.FAILED);
+    }
+
+    @Transactional
     public boolean markDoneIfFirst(String jobId, Long gameId) {
         try {
             // [JOB-STATUS-UPDATE] jobId 상태를 DONE으로 변경 시도 (멱등 처리 핵심)
