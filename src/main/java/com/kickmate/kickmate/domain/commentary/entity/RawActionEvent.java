@@ -8,8 +8,13 @@ import lombok.Setter;
 
 @Getter
 @Entity
-@Table(name = "raw_action_event")
-public class RawActionEvent {
+@Table(
+        name = "raw_action_event",
+        indexes = {
+                @Index(name = "idx_action_event_game_action", columnList = "game_id, action_id")
+        }
+)
+public class  RawActionEvent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)

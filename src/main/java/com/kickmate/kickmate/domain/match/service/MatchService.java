@@ -11,6 +11,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.Year;
 import java.util.List;
 
 @Service
@@ -24,8 +26,11 @@ public class MatchService {
 
 
 
+        LocalDateTime startDate = LocalDateTime.of(Year.now().getValue(), dto.getMonth(), 1, 0, 0);
+        LocalDateTime endDate = startDate.plusMonths(1);
+
         List<RawMatchInfo> matches = matchInfoRepository
-                .findAllByMonthAndRound(dto.getMonth(), dto.getRound());
+                .findAllByRoundAndGameDateBetween(dto.getRound(), startDate, endDate);
 
 
 

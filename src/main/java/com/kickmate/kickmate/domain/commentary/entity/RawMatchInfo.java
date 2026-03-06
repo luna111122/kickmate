@@ -10,7 +10,13 @@ import java.time.LocalDateTime;
 
 @Getter
 @Entity
-@Table(name = "raw_match_info")
+@Table(
+        name = "raw_match_info",
+        indexes = {
+                @Index(name = "idx_match_info_game_id", columnList = "game_id", unique = true),
+                @Index(name = "idx_match_info_round_date", columnList = "game_day, game_date")
+        }
+)
 public class RawMatchInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

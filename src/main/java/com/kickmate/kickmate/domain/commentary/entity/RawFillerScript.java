@@ -7,7 +7,12 @@ import lombok.Setter;
 
 @Getter
 @Entity
-@Table(name = "raw_filler_script")
+@Table(
+        name = "raw_filler_script",
+        indexes = {
+                @Index(name = "idx_filler_script_game_id", columnList = "game_id")
+        }
+)
 public class RawFillerScript {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

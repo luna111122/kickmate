@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,12 +18,14 @@ public interface MatchInfoRepository extends JpaRepository<RawMatchInfo, Long> {
         SELECT r
         FROM RawMatchInfo r
         WHERE r.gameDay = :round
-          AND FUNCTION('MONTH', r.gameDate) = :month
+          AND r.gameDate >= :startDate
+          AND r.gameDate < :endDate
         ORDER BY r.gameDate ASC
     """)
-    List<RawMatchInfo> findAllByMonthAndRound(
-            @Param("month") Integer month,
-            @Param("round") Integer round
+    List<RawMatchInfo> findAllByRoundAndGameDateBetween(
+            @Param("round") Integer round,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate
     );
 
 }
