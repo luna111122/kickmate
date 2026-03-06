@@ -3,7 +3,6 @@ package com.kickmate.kickmate.domain.commentary.service;
 import com.kickmate.kickmate.domain.commentary.dto.ActionCoordDto;
 import com.kickmate.kickmate.domain.commentary.dto.ScoreRes;
 import com.kickmate.kickmate.domain.commentary.entity.AiJob;
-import com.kickmate.kickmate.domain.commentary.enums.Style;
 import com.kickmate.kickmate.domain.commentary.exception.CommentaryException;
 import com.kickmate.kickmate.domain.commentary.exception.code.CommentaryErrorCode;
 import com.kickmate.kickmate.domain.commentary.repository.AIJobRepository;
@@ -18,12 +17,10 @@ import com.kickmate.kickmate.domain.commentary.tts.GoogleTtsClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -40,47 +37,25 @@ public class AIWebhookWorker {
     @Async("aiWebhookExecutor")
     public void processAsync(AiWebhookReq req) {
         try {
-
+            // AiJob 한 번만 조회 (style + clientId 모두 여기서 해결)
+            AiJob aiJob = aiJobRepository.findByJobId(req.getJobId())
+                    .orElseThrow(() -> new CommentaryException(CommentaryErrorCode.AI_JOB_NOT_FOUND));
 
             String ssml = SsmlBuilder.toSsml(req.getScript());
-
-
-            Style style = aiJobRepository.findByJobId(req.getJobId())
-                    .orElseThrow(() -> new CommentaryException(CommentaryErrorCode.AI_JOB_NOT_FOUND))
-                    .getStyle();
-
-
-
-            // 여기서 Style enum 을 같이 준다
-            byte[] mp3 = googleTtsClient.createTtsFromSsml(ssml, style);
+            byte[] mp3 = googleTtsClient.createTtsFromSsml(ssml, aiJob.getStyle());
 
             String key = "commentary/ai/" + req.getGameId() + "/" + req.getJobId() + ".mp3";
             String mp3Url = s3Uploader.upload(key, mp3, "audio/mpeg");
 
-
-            Long gameId = req.getGameId();
-
-            //이거 예외 나중에 코드로 처리
             Integer firstActionId = req.getScript().stream()
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("script is empty"))
                     .getActionId();
 
-
-            Pageable limit50 = PageRequest.of(0, 10);
-
-            List<RawActionEvent> rawData = actionEventRepository.findByGameIdAndActionIdGreaterThanEqualOrderByActionIdAsc(gameId, firstActionId, limit50);
-
-
-
-
-
-
-
-
-
-
-
+            List<RawActionEvent> rawData = actionEventRepository
+                    .findByGameIdAndActionIdGreaterThanEqualOrderByActionIdAsc(
+                            req.getGameId(), firstActionId, PageRequest.of(0, 10)
+                    );
 
             List<ActionCoordDto> coords = rawData.stream()
                     .map(r -> ActionCoordDto.builder()
@@ -97,26 +72,8 @@ public class AIWebhookWorker {
                     )
                     .toList();
 
-
-            String clientId = aiJobRepository.findByJobId(req.getJobId())
-                    .orElseThrow(() -> new CommentaryException(CommentaryErrorCode.AI_JOB_NOT_FOUND))
-                    .getClientId();
-
-
-
-            Pageable limit10 = PageRequest.of(0, 10);
-
-            List<RawActionEvent> next10 =
-                    actionEventRepository
-                            .findByGameIdAndActionIdGreaterThanEqualOrderByActionIdAsc(
-                                    gameId, req.getScript().get(0).getActionId(), limit10
-                            );
-
-            List<RawActionEvent> goalEvents = next10.stream()
+            List<ScoreRes> scoreList = rawData.stream()
                     .filter(e -> "Goal".equals(e.getTypeName()) || "Own Goal".equals(e.getTypeName()))
-                    .toList(); // 없으면 자동으로 빈 리스트
-
-            List<ScoreRes> scoreList = goalEvents.stream()
                     .map(event -> ScoreRes.builder()
                             .typeName(event.getTypeName())
                             .teamName(event.getTeamNameKoShort())
@@ -125,8 +82,6 @@ public class AIWebhookWorker {
                     )
                     .toList();
 
-
-            // 7)  최종 결과 DTO 하나로 조립
             AiCommentarySseRes result = AiCommentarySseRes.builder()
                     .gameId(req.getGameId())
                     .jobId(req.getJobId())
@@ -134,18 +89,10 @@ public class AIWebhookWorker {
                     .script(req.getScript())
                     .coords(coords)
                     .score(scoreList)
-                    .clientId(clientId)
+                    .clientId(aiJob.getClientId())
                     .build();
 
-
             aiCommentarySseService.sendDone(req.getJobId(), result);
-
-
-
-
-
-
-
 
         } catch (Exception e) {
             log.error("[WEBHOOK] processAsync failed. jobId={}, gameId={}, error={}",
